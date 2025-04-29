@@ -1,61 +1,179 @@
-<!--
- Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2025)
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <link rel="shortcut icon" href="favicon.png" />
-    <link
-      rel="preload"
-      href="static/media/SourceSansPro-Regular.DZLUzqI4.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="static/media/SourceSansPro-SemiBold.sKQIyTMz.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="static/media/SourceSansPro-Bold.-6c9oR8J.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Translation App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+        .btn-primary {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .audio-controls {
+            width: 100%;
+            margin: 10px 0;
+        }
+        #recordButton {
+            background-color: #e87070;
+            color: white;
+            -webkit-appearance: none; /* Remove Safari default styling */
+            appearance: none;
+        }
+        #recordButton.recording {
+            background-color: #ff0000;
+        }
+        .recording {
+            background-color: #ff4444 !important;
+            color: white !important;
+            animation: pulse 1.5s infinite;
+            -webkit-animation: pulse 1.5s infinite; /* Safari support */
+        }
 
-    <title>Streamlit</title>
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+            }
+        }
 
-    <!-- initialize window.prerenderReady to false and then set to true in React app when app is ready for indexing -->
-    <script>
-      window.prerenderReady = false
-    </script>
-    <script type="module" crossorigin src="static/js/index.B-cSXLfy.js"></script>
-    <link rel="stylesheet" crossorigin href="static/css/index.BOl9eq08.css">
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
-</html>
+        @-webkit-keyframes pulse {
+            0% {
+                -webkit-box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+            70% {
+                -webkit-box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+            100% {
+                -webkit-box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+            }
+        }
+
+        #recordButton {
+            transition: all 0.3s ease;
+            -webkit-transition: all 0.3s ease; /* Safari support */
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .btn-lg {
+                padding: 8px 16px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Safari-specific audio controls */
+        audio::-webkit-media-controls-panel {
+            background-color: #f8f9fa;
+        }
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Voice Translation App</h1>
+        <p class="lead">Transform voice messages between languages instantly! Upload an audio file or record directly in your browser.</p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Source Language</h3>
+                <select id="sourceLanguage" class="form-select">
+                    <option value="en">English (en)</option>
+                    <option value="es">Spanish (es)</option>
+                    <option value="fr">French (fr)</option>
+                    <option value="de">German (de)</option>
+                    <option value="it">Italian (it)</option>
+                    <!-- Add more languages as needed -->
+                </select>
+            </div>
+            <div class="col-md-6">
+                <h3>Target Language</h3>
+                <select id="targetLanguage" class="form-select">
+                    <option value="es">Spanish (es)</option>
+                    <option value="en">English (en)</option>
+                    <option value="fr">French (fr)</option>
+                    <option value="de">German (de)</option>
+                    <option value="it">Italian (it)</option>
+                    <!-- Add more languages as needed -->
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Input Audio</h3>
+            <div class="form-check">
+                <input type="radio" id="uploadAudio" name="inputMethod" class="form-check-input" checked>
+                <label class="form-check-label" for="uploadAudio">Upload Audio</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="recordAudio" name="inputMethod" class="form-check-input">
+                <label class="form-check-label" for="recordAudio">Record Audio</label>
+            </div>
+
+            <div id="uploadSection" class="mt-3">
+                <input type="file" id="audioFile" class="form-control" accept="audio/*">
+                <audio id="uploadedAudio" controls class="audio-controls mt-3"></audio>
+            </div>
+
+            <div id="recordSection" class="mt-3" style="display: none;">
+                <button id="recordButton" class="btn btn-lg">Start Recording</button>
+                <audio id="recordedAudio" controls class="audio-controls mt-3"></audio>
+            </div>
+
+            <button id="translateButton" class="btn btn-primary btn-lg mt-4">Translate Audio</button>
+
+            <div id="results" class="mt-4" style="display: none;">
+                <h3>Transcript</h3>
+                <textarea id="transcript" class="form-control" rows="4" readonly></textarea>
+
+                <h3 class="mt-4">Translation</h3>
+                <textarea id="translation" class="form-control" rows="4" readonly></textarea>
+
+                <h3 class="mt-4">Output Audio</h3>
+                <audio id="outputAudio" controls class="audio-controls"></audio>
+                <button id="downloadButton" class="btn btn-success btn-lg mt-3">Download Translated Audio</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
