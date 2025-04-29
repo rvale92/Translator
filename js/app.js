@@ -4,6 +4,104 @@ const config = {
     API_URL: 'https://api.openai.com/v1/audio/translations'
 };
 
+// Function to create the UI
+function createUI() {
+    const appDiv = document.getElementById('app');
+    
+    // Create language selection
+    const languageRow = document.createElement('div');
+    languageRow.className = 'row';
+    languageRow.innerHTML = `
+        <div class="col-md-6">
+            <h3>Source Language</h3>
+            <select id="sourceLanguage" class="form-select">
+                <option value="en">English (en)</option>
+                <option value="es">Spanish (es)</option>
+                <option value="fr">French (fr)</option>
+                <option value="de">German (de)</option>
+                <option value="it">Italian (it)</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <h3>Target Language</h3>
+            <select id="targetLanguage" class="form-select">
+                <option value="es">Spanish (es)</option>
+                <option value="en">English (en)</option>
+                <option value="fr">French (fr)</option>
+                <option value="de">German (de)</option>
+                <option value="it">Italian (it)</option>
+            </select>
+        </div>
+    `;
+    
+    // Create input section
+    const inputSection = document.createElement('div');
+    inputSection.className = 'mt-4';
+    inputSection.innerHTML = `
+        <h3>Input Audio</h3>
+        <div class="form-check">
+            <input type="radio" id="uploadAudio" name="inputMethod" class="form-check-input" checked>
+            <label class="form-check-label" for="uploadAudio">Upload Audio</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" id="recordAudio" name="inputMethod" class="form-check-input">
+            <label class="form-check-label" for="recordAudio">Record Audio</label>
+        </div>
+
+        <div id="uploadSection" class="mt-3">
+            <input type="file" id="audioFile" class="form-control" accept="audio/*">
+            <audio id="uploadedAudio" controls class="audio-controls mt-3"></audio>
+        </div>
+
+        <div id="recordSection" class="mt-3" style="display: none;">
+            <button id="recordButton" class="btn btn-lg">Start Recording</button>
+            <audio id="recordedAudio" controls class="audio-controls mt-3"></audio>
+        </div>
+
+        <button id="translateButton" class="btn btn-primary btn-lg mt-4">Translate Audio</button>
+    `;
+    
+    // Create results section
+    const resultsSection = document.createElement('div');
+    resultsSection.id = 'results';
+    resultsSection.className = 'mt-4';
+    resultsSection.style.display = 'none';
+    resultsSection.innerHTML = `
+        <h3>Transcript</h3>
+        <textarea id="transcript" class="form-control" rows="4" readonly></textarea>
+
+        <h3 class="mt-4">Translation</h3>
+        <textarea id="translation" class="form-control" rows="4" readonly></textarea>
+
+        <h3 class="mt-4">Output Audio</h3>
+        <audio id="outputAudio" controls class="audio-controls"></audio>
+        <button id="downloadButton" class="btn btn-success btn-lg mt-3">Download Translated Audio</button>
+    `;
+    
+    // Add API key input
+    const apiKeySection = document.createElement('div');
+    apiKeySection.className = 'mt-3';
+    apiKeySection.innerHTML = `
+        <h3>OpenAI API Key</h3>
+        <div class="input-group">
+            <input type="password" id="apiKeyInput" class="form-control" placeholder="Enter your OpenAI API key">
+            <button class="btn btn-outline-secondary" type="button" id="saveApiKey">Save</button>
+        </div>
+    `;
+    
+    // Append all sections
+    appDiv.appendChild(apiKeySection);
+    appDiv.appendChild(languageRow);
+    appDiv.appendChild(inputSection);
+    appDiv.appendChild(resultsSection);
+}
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    createUI();
+    initializeEventListeners();
+});
+
 // DOM Elements
 const uploadAudioRadio = document.getElementById('uploadAudio');
 const recordAudioRadio = document.getElementById('recordAudio');
